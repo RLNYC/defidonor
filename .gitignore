@@ -22,6 +22,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+t
 yarn.lock
 package-lock.json
 config.js
+.env
