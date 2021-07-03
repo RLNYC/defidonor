@@ -25,11 +25,11 @@ router.get('/listwallets', async (req, res, next) => {
 
 // GET /api/bitgoapi/balance
 // Get the balance of a multi-sig wallet at BitGo
-router.get('/balance', async (req, res, next) => {
+router.get('/balance/:walletid', async (req, res, next) => {
   const basecoin = bitgo.coin(coin);
   bitgo.authenticateWithAccessToken({ accessToken: accessToken });
  
-  const walletInstance = await basecoin.wallets().get({ id: walletId });
+  const walletInstance = await basecoin.wallets().get({ id: req.params.walletid });
 
   console.log('Wallet ID:', walletInstance.id());
   console.log('Current Receive Address:', walletInstance.receiveAddress());
@@ -48,9 +48,9 @@ router.get('/balance', async (req, res, next) => {
 
 // GET /api/bitgoapi/transfertransactions
 // List all transfers on a multi-sig wallets at BitGo for the given coin
-router.get('/transfertransactions', async (req, res, next) => {
+router.get('/transfertransactions/:walletid', async (req, res, next) => {
   const basecoin = bitgo.coin(coin);
-  const walletInstance = await basecoin.wallets().get({ id: walletId });
+  const walletInstance = await basecoin.wallets().get({ id: req.params.walletid });
   const transfers = await walletInstance.transfers();
 
   console.log('Wallet ID:', walletInstance.id());
@@ -58,9 +58,9 @@ router.get('/transfertransactions', async (req, res, next) => {
   console.log('Wallet Transactions:', JSON.stringify(transfers, null, 4));
 
   return res.status(200).json({
-    'Wallet ID': walletInstance.id(),
-    'Current Receive Address': walletInstance.receiveAddress(),
-    'Wallet Transactions': transfers
+    'WalletID': walletInstance.id(),
+    'CurrentReceiveAddress': walletInstance.receiveAddress(),
+    'WalletTransactions': transfers
   });
 });
 

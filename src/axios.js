@@ -1,12 +1,9 @@
 import axios from 'axios';
 
-import { CIRCLE_SANDBOX_APIKEY } from './config';
-
-let serverURL = 'https://api-sandbox.circle.com/';
+let serverURL = 'http://localhost:4000/api/bitgoapi/';
 
 const instance = axios.create({
    baseURL: serverURL,
-   headers: {"Authorization": `Bearer ${CIRCLE_SANDBOX_APIKEY}`}
 });
 
 export default instance;

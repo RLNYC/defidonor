@@ -1,24 +1,21 @@
-import React, { useEffect } from 'react';
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Switch, Route  } from 'react-router-dom';
 
 import './App.css';
-import { BITGO_APIKEY } from './config';
-import Main from './components/Main';
+import Navbar from './components/layout/Navbar';
+import Home from './pages/Home';
 
 function App() {
-  useEffect(() => {
-    const initializeBitgo = async () => {
-      const BitGo = require('bitgo');
-      const bitgo = new BitGo.BitGo({ accessToken: BITGO_APIKEY }); // defaults to testnet. add env: 'prod' if you want to go against mainnet
-      // const result = await bitgo.session();
-      console.log(bitgo);
-    }
-
-    initializeBitgo();
-  }, [])
   return (
-    <div className="App">
-      <Main />
-    </div>
+    <Router className="App">
+      <Navbar />
+      <Switch>
+        <Route path="">
+          <Home />
+        </Route>
+    </Switch>
+    </Router>
   );
 }
 
