@@ -6,6 +6,7 @@ import './App.css';
 import Navbar from './components/layout/Navbar';
 import Home from './pages/Home';
 import GivingAccount from './pages/GivingAccount';
+import GrantCharities from './pages/GrantCharities';
 
 function App() {
   return (
@@ -14,6 +15,9 @@ function App() {
       <Switch>
         <Route exact path="/givingaccount">
           <GivingAccount />
+        </Route>
+        <Route exact path="/grantcharities">
+          <GrantCharities />
         </Route>
         <Route path="">
           <Home />

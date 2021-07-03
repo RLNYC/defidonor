@@ -6,6 +6,7 @@ import axios from '../axios';
 function Home() {
     const [balance, setBalance] = useState(0);
     const [transactions, setTransactions] = useState([]);
+    
     useEffect(() => {
         async function getBalance(){
             const { data } = await axios.get('balance/60dcfd0776918e0006fc8d532af66320');
@@ -48,7 +49,7 @@ function Home() {
                             </div>
                             <div className="card">
                                 <div className="card-body">
-                                    <Link to="/" className="btn btn-outline-primary btn-lg">
+                                    <Link to="/grantcharities" className="btn btn-outline-primary btn-lg">
                                         Grant to Giving
                                     </Link>
                                 </div>

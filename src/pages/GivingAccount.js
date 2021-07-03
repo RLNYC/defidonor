@@ -50,7 +50,7 @@ function GivingAccount() {
                                    </div>
                                 </td>
                                 <td>{token.balance / 10 ** 18}</td>
-                                <td>${token.quote_rate}</td>
+                                <td>${token.quote_rate || 0}</td>
                                 <td>${token.quote}</td>
                             </tr>
                         ))}

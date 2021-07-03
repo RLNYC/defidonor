@@ -125,10 +125,11 @@ router.put('/sendtransaction', async (req, res, next) => {
   const amount = req.body.amount;
   const toAddress = req.body.toAddress;
   const walletId = req.body.walletId;
+  const coinType = req.body.coinType;
 
   //await bitgo.unlock({ otp: '000000', duration: 3600 });
-  //const basecoin = bitgo.coin('tdai');
 
+  const basecoin = bitgo.coin(coinType);
   const walletInstance = await basecoin.wallets().get({ id: walletId });
   const transaction = await walletInstance.sendMany({
     recipients: [
