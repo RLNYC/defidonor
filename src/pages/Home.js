@@ -24,7 +24,7 @@ function Home() {
     }, [])
     return (
         <div className="container">
-            <div className="jumbotron pt-3 pb-3 mt-3">
+            <div className="jumbotron pt-3 pb-3 mt-3 mb-3">
                 <div className="row">
                     <div className="col-12 col-md-6">
                         <h1 className="h1">
@@ -41,7 +41,7 @@ function Home() {
                         <div className="d-flex">
                             <div className="card">
                                 <div className="card-body">
-                                    <Link to="/" className="btn btn-outline-primary btn-lg">
+                                    <Link to="/givingaccount" className="btn btn-outline-primary btn-lg">
                                         Fund your Giving
                                     </Link>
                                 </div>
@@ -58,11 +58,11 @@ function Home() {
                 </div>
             </div>
 
-            <h2>
+            <h2 className="mt-0 h3">
                 Recent grant activity
             </h2>
             <hr />
-            <div className="table-responsive">
+            <div className="table-responsive table-height">
                 <table className="table">
                     <thead>
                         <tr>
@@ -89,6 +89,12 @@ function Home() {
                     </tbody>
                 </table>
             </div>
+
+            <h2 className="mt-4 h3">
+                Proof for Donatin Fund
+            </h2>
+            <hr />
+            <p>None</p>
         </div>
     )
 }
