@@ -23,30 +23,54 @@ router.get('/listwallets', async (req, res, next) => {
   return res.status(200).json({ data: wallets });
 });
 
-// GET /api/bitgoapi/balance
+// GET /api/bitgoapi/balance/:walletid
 // Get the balance of a multi-sig wallet at BitGo
 router.get('/balance/:walletid', async (req, res, next) => {
   const basecoin = bitgo.coin(coin);
   bitgo.authenticateWithAccessToken({ accessToken: accessToken });
  
   const walletInstance = await basecoin.wallets().get({ id: req.params.walletid });
-
+  
   console.log('Wallet ID:', walletInstance.id());
+  //console.dir(wallet.balanceString(), { depth: 100 });
   console.log('Current Receive Address:', walletInstance.receiveAddress());
   console.log('Balance:', walletInstance.balanceString());
   console.log('Confirmed Balance:', walletInstance.confirmedBalanceString());
   console.log('Spendable Balance:', walletInstance.spendableBalanceString());
 
   return res.status(200).json({
-    'Wallet ID': walletInstance.id(),
-    'Current Receive Address': walletInstance.receiveAddress(),
+    'WalletID': walletInstance.id(),
+    'CurrentReceiveAddress': walletInstance.receiveAddress(),
     'Balance': walletInstance.balanceString(),
-    'Confirmed Balance': walletInstance.confirmedBalanceString(),
-    'Spendable Balance': walletInstance.spendableBalanceString()
+    'ConfirmedBalance': walletInstance.confirmedBalanceString(),
+    'SpendableBalance': walletInstance.spendableBalanceString(),
+    'Data': walletInstance
   });
 });
 
-// GET /api/bitgoapi/transfertransactions
+// GET /api/bitgoapi/alltokens/:walletid
+// Get the balance of all tokens from multi-sig wallet at BitGo
+router.get('/alltokens/:walletid', async (req, res, next) => {
+  bitgo.authenticateWithAccessToken({ accessToken: accessToken });
+ 
+  const teth = await bitgo.coin('teth').wallets().get({ id: req.params.walletid });
+  const tdai = await bitgo.coin('tdai').wallets().get({ id: req.params.walletid });
+  
+  return res.status(200).json({
+    'teth': {
+      'balance': teth.balanceString(),
+      'name': 'Ether',
+      'symbol': 'ETH'
+    },
+    'tdai':{
+      'balance': tdai.balanceString(),
+      'name': 'Dai Stablecoin',
+      'symbol': 'DAI'
+    },
+  });
+});
+
+// GET /api/bitgoapi/transfertransactions/:walletid
 // List all transfers on a multi-sig wallets at BitGo for the given coin
 router.get('/transfertransactions/:walletid', async (req, res, next) => {
   const basecoin = bitgo.coin(coin);
@@ -103,8 +127,8 @@ router.put('/sendtransaction', async (req, res, next) => {
   const walletId = req.body.walletId;
 
   //await bitgo.unlock({ otp: '000000', duration: 3600 });
-  
-  const basecoin = bitgo.coin(coin);
+  //const basecoin = bitgo.coin('tdai');
+
   const walletInstance = await basecoin.wallets().get({ id: walletId });
   const transaction = await walletInstance.sendMany({
     recipients: [
