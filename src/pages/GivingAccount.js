@@ -2,21 +2,30 @@ import React, { useEffect, useState } from 'react';
 
 import { COVALENTAPIKEY } from '../config';
 
-function GivingAccount() {
+function GivingAccount({ walletAddress, charitableBlockchain }) {
     const [tokens, setTokens] = useState([]);
     const [token, setToken] = useState('ETH');
     const [amount, setAmount] = useState('');
 
     useEffect(() => {
         async function getUserTokens(){
-            const res = await fetch(`https://api.covalenthq.com/v1/42/address/0x4d7FB3b1F1dae456b814f2173aA64BaAfBd8f7ba/balances_v2/?key=${COVALENTAPIKEY}`);
+            const res = await fetch(`https://api.covalenthq.com/v1/42/address/${walletAddress}/balances_v2/?key=${COVALENTAPIKEY}`);
+            console.log("walletAddress", walletAddress)
             const { data } = await res.json();
             console.log(data);
             setTokens(data.items);
         }
 
         getUserTokens();
-    }, [])
+    }, [walletAddress])
+
+    const donateToCharities = async () => {
+        const data = await charitableBlockchain.methods
+          .createReceipt(window.web3.utils.toWei(amount, 'Ether'), token, "0x14f5e38e6c965eb6af740d1031e9873ec0859d69")
+          .send({ from: walletAddress, value: window.web3.utils.toWei(amount, 'Ether') });
+        
+        console.log(data);
+      }
 
     return (
         <div className="container">
@@ -78,7 +87,7 @@ function GivingAccount() {
                     </div>
                 </div>
             </div>
-            <button className="btn btn-primary btn-lg mt-2" type="button" >
+            <button className="btn btn-primary btn-lg mt-2" type="button" onClick={donateToCharities}>
                 Submit
             </button>
         </div>

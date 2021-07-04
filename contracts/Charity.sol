@@ -24,7 +24,8 @@ contract Charity {
     address receipt
   );
 
-  function createReceipt(uint _value, string memory _asset, address _receipt) public {
+  function createReceipt(uint _value, string memory _asset, address payable _receipt) public payable {
+    _receipt.transfer(msg.value);
     receiptCount++;
 
     receiptList[receiptCount] = NFTReceipt(receiptCount, now, _asset, _value, msg.sender, _receipt);

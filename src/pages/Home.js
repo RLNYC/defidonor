@@ -9,13 +9,13 @@ function Home() {
     
     useEffect(() => {
         async function getBalance(){
-            const { data } = await axios.get('balance/60dcfd0776918e0006fc8d532af66320');
+            const { data } = await axios.get('balance/60df667606bfe2000629f6911c9ca9ad');
             console.log(data);
             setBalance(data.Balance);
         }
 
         async function getTransactions(){
-            const { data } = await axios.get('transfertransactions/60dcfd0776918e0006fc8d532af66320');
+            const { data } = await axios.get('transfertransactions/60df667606bfe2000629f6911c9ca9ad');
             console.log(data.WalletTransactions.transfers);
             setTransactions(data.WalletTransactions.transfers)
         }
@@ -50,7 +50,7 @@ function Home() {
                             <div className="card">
                                 <div className="card-body">
                                     <Link to="/grantcharities" className="btn btn-outline-primary btn-lg">
-                                        Grant to Giving
+                                        Grant to Charity
                                     </Link>
                                 </div>
                             </div>

@@ -15,7 +15,7 @@ function GrantCharities() {
     
     useEffect(() => {
         async function getBalance(){
-            const { data } = await axios.get('balance/60dcfd0776918e0006fc8d532af66320');
+            const { data } = await axios.get('balance/60df667606bfe2000629f6911c9ca9ad');
             console.log(data);
             setBalance(data.Balance);
             setGivingAddress(data.CurrentReceiveAddress);
@@ -39,7 +39,7 @@ function GrantCharities() {
         try{
             setLoading(true);
             const payData = {
-                "amount": amount,
+                "amount": window.web3.utils.toWei(amount, 'Ether'),
                 "toAddress": charityAddress,
                 "walletId": "60dcfd0776918e0006fc8d532af66320",
                 "coinType": token
