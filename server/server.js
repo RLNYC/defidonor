@@ -10,6 +10,7 @@ app.use(cors());
 
 app.get('/', (req, res) => res.send('Server Work'));
 app.use('/api/bitgoapi', require('./routes/bitgoapi'));
+app.use('/api/pdf', require('./routes/pdf'));
 
 const port = process.env.PORT || 4000;
 
