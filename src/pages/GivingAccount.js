@@ -3,13 +3,20 @@ import React, { useEffect, useState } from 'react';
 import { COVALENTAPIKEY } from '../config';
 import axios from '../axios';
 
-function GivingAccount({ walletAddress, charitableBlockchain }) {
+function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
     const [tokens, setTokens] = useState([]);
     const [token, setToken] = useState('ETH');
     const [amount, setAmount] = useState('');
     const [transactionHash, setTransactionHash] = useState('');
+    const [bitgoWalletAddress, setBitgoWalletAddress] = useState('');
 
     useEffect(() => {
+        async function getBitgoWalletAddress(){
+            const { data } = await axios.get(`bitgoapi/balance/${bitgoWalletId}`);
+            console.log(data);
+            setBitgoWalletAddress(data.CurrentReceiveAddress);
+        }
+
         async function getUserTokens(){
             const res = await fetch(`https://api.covalenthq.com/v1/42/address/${walletAddress}/balances_v2/?key=${COVALENTAPIKEY}`);
             console.log("walletAddress", walletAddress)
@@ -19,6 +26,7 @@ function GivingAccount({ walletAddress, charitableBlockchain }) {
         }
 
         getUserTokens();
+        if(bitgoWalletId) getBitgoWalletAddress();
     }, [walletAddress])
 
     const donateToCharities = async () => {
@@ -26,7 +34,7 @@ function GivingAccount({ walletAddress, charitableBlockchain }) {
             const userData = {
                 "sponsoringOrganization": "Red Cross",
                 "sentAddress": walletAddress,
-                "receiveAddress": "0x90e64e83863d1b7d909ee4041e257f7a72458557",
+                "receiveAddress": bitgoWalletAddress,
                 "assets": `${amount} ETH`,
                 "totalAssetValues": "$150"
             }
@@ -35,7 +43,7 @@ function GivingAccount({ walletAddress, charitableBlockchain }) {
             console.log(res);
 
             const data = await charitableBlockchain.methods
-                .createReceiptandMint(res.data.url, "0x90e64e83863d1b7d909ee4041e257f7a72458557")
+                .createReceiptandMint(res.data.url, bitgoWalletAddress)
                 .send({ from: walletAddress, value: window.web3.utils.toWei(amount, 'Ether') });
             
             console.log(data);

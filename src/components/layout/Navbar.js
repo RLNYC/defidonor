@@ -2,9 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Web3 from 'web3';
 
+import axios from '../../axios';
 import CharitableBlockchain from '../../abis/Charity.json';
 
-function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain }) {
+function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setBitgoWalletId }) {
     const connetToWallet = async () => {
         if (window.ethereum) {
             window.web3 = new Web3(window.ethereum);
@@ -35,7 +36,34 @@ function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain }) {
         } else {
             window.alert('Contract is not deployed to detected network')
         }
+
+        getBitgoWalletId(accounts[0]);
     }
+
+    async function getBitgoWalletId(address){
+        try{
+            const { data } = await axios.get(`bitgoapi/walletid/${address}`);
+            console.log(data);
+            setBitgoWalletId(data.data[0].id)
+        } catch(err) {
+            console.error(err);
+            createBitgoWallet(address);
+        }
+        
+    }
+
+    async function createBitgoWallet(address){
+        try{
+            const { data } = await axios.post('bitgoapi/createwallet', {label: address});
+            console.log(data);
+            setBitgoWalletId(data.WalletID);
+        } catch(err) {
+            console.error(err);
+            
+        }
+        
+    }
+
     return (
         <nav className="navbar navbar-light bg-light">
             <div className="container">

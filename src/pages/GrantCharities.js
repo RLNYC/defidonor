@@ -4,7 +4,7 @@ import axios from '../axios';
 import { COVALENTAPIKEY } from '../config';
 import Spinner from '../components/Spinner';
 
-function GrantCharities() {
+function GrantCharities({ bitgoWalletId }) {
     const [givingAddress, setGivingAddress] = useState('');
     const [balance, setBalance] = useState(0);
     const [tokens, setTokens] = useState([]);
@@ -16,14 +16,14 @@ function GrantCharities() {
     
     useEffect(() => {
         async function getBalance(){
-            const { data } = await axios.get('bitgoapi/balance/60e1348047688b00061b3fff87e4d7b7');
+            const { data } = await axios.get(`bitgoapi/balance/${bitgoWalletId}`);
             console.log(data);
             setBalance(data.Balance);
             setGivingAddress(data.CurrentReceiveAddress);
         }
 
         getBalance();
-    }, [])
+    }, [bitgoWalletId])
 
     useEffect(() => {
         async function getUserTokens(){
@@ -42,10 +42,10 @@ function GrantCharities() {
             const payData = {
                 "amount": window.web3.utils.toWei(amount, 'Ether'),
                 "toAddress": charityAddress,
-                "walletId": "60e1348047688b00061b3fff87e4d7b7",
+                "walletId": bitgoWalletId,
                 "coinType": token
             }
-            const { data } = await axios.put('sendtransaction', payData);
+            const { data } = await axios.put('bitgoapi/sendtransaction', payData);
             console.log(data);
             setTransactionHash(data.data.txid);
             setLoading(false);

@@ -9,6 +9,7 @@ import GrantCharities from './pages/GrantCharities';
 
 function App() {
   const [walletAddress, setWalletAddress] = useState('');
+  const [bitgoWalletId, setBitgoWalletId] = useState('');
   const [charitableBlockchain, setCharitableBlockchain] = useState(null);
   
   return (
@@ -16,19 +17,22 @@ function App() {
       <Navbar
         walletAddress={walletAddress}
         setWalletAddress={setWalletAddress}
-        setCharitableBlockchain={setCharitableBlockchain} />
+        setCharitableBlockchain={setCharitableBlockchain}
+        setBitgoWalletId={setBitgoWalletId} />
       <Switch>
         <Route exact path="/givingaccount">
           <GivingAccount
              walletAddress={walletAddress}
+             bitgoWalletId={bitgoWalletId}
              charitableBlockchain={charitableBlockchain} />
         </Route>
         <Route exact path="/grantcharities">
-          <GrantCharities />
+          <GrantCharities bitgoWalletId={bitgoWalletId} />
         </Route>
         <Route path="/">
           <Home
             walletAddress={walletAddress}
+            bitgoWalletId={bitgoWalletId}
             charitableBlockchain={charitableBlockchain} />
         </Route>
     </Switch>

@@ -3,28 +3,29 @@ import { Link } from 'react-router-dom';
 
 import axios from '../axios';
 
-function Home({ walletAddress, charitableBlockchain }) {
+function Home({ walletAddress, bitgoWalletId, charitableBlockchain }) {
     const [balance, setBalance] = useState(0);
     const [transactions, setTransactions] = useState([]);
     const [receipts, setReceipts] = useState([]);
     
     useEffect(() => {
         async function getBalance(){
-            const { data } = await axios.get('bitgoapi/balance/60e1348047688b00061b3fff87e4d7b7');
+            const { data } = await axios.get(`bitgoapi/balance/${bitgoWalletId}`);
             console.log(data);
             setBalance(data.Balance);
         }
 
         async function getTransactions(){
-            const { data } = await axios.get('bitgoapi/transfertransactions/60e1348047688b00061b3fff87e4d7b7');
+            const { data } = await axios.get(`bitgoapi/transfertransactions/${bitgoWalletId}`);
             console.log(data.WalletTransactions.transfers);
             setTransactions(data.WalletTransactions.transfers)
         }
 
-        getBalance();
-        getTransactions();
-        
-    }, [])
+        if(bitgoWalletId){
+            getBalance();
+            getTransactions();
+        }
+    }, [bitgoWalletId])
 
     useEffect(() => {
         async function getReceiptNFT(){

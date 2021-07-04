@@ -17,10 +17,22 @@ router.get('/listwallets', async (req, res, next) => {
   const wallets = await bitgo.coin(coin).wallets().list({});
 
   for(const wallet of wallets.wallets){
+    console.log(`Wallet:`, wallet);
     console.log(`Wallet label: ${wallet.label()}`);
     console.log(`Wallet ID: ${wallet.id()}`);
   }
   return res.status(200).json({ data: wallets });
+});
+
+// GET /api/bitgoapi/walletid/:walletid
+// Get wallet Id by wallet label
+router.get('/walletid/:walletid', async (req, res, next) => {
+  const wallet = await bitgo.get(bitgo.url('/wallets/merged', 2)).query({ searchLabel: req.params.walletid, enterprise: '' }).result();
+
+  console.dir(wallet);
+
+  if(!wallet.wallets.length) return res.status(404).json({ error: "Not Found"});
+  return res.status(200).json({ data: wallet.wallets });
 });
 
 // GET /api/bitgoapi/balance/:walletid
@@ -113,9 +125,9 @@ router.post('/createwallet', async (req, res, next) => {
     console.log(`Backup keychain xPrv: ${wallet.backupKeychain.prv}`);
 
     return res.status(201).json({
-      "Wallet ID": walletInstance.id(),
-      "User keychain encrypted xPrv": wallet.userKeychain.encryptedPrv,
-      "Backup keychain xPrv": wallet.backupKeychain.prv
+      "WalletID": walletInstance.id(),
+      "User_keychain_encrypted_xPrv": wallet.userKeychain.encryptedPrv,
+      "Backup_keychain_xPrv": wallet.backupKeychain.prv
     });
 });
 
