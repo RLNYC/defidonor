@@ -9,13 +9,13 @@ function Home() {
     
     useEffect(() => {
         async function getBalance(){
-            const { data } = await axios.get('balance/60df667606bfe2000629f6911c9ca9ad');
+            const { data } = await axios.get('balance/60e1348047688b00061b3fff87e4d7b7');
             console.log(data);
             setBalance(data.Balance);
         }
 
         async function getTransactions(){
-            const { data } = await axios.get('transfertransactions/60df667606bfe2000629f6911c9ca9ad');
+            const { data } = await axios.get('transfertransactions/60e1348047688b00061b3fff87e4d7b7');
             console.log(data.WalletTransactions.transfers);
             setTransactions(data.WalletTransactions.transfers)
         }

@@ -11,11 +11,12 @@ function GrantCharities() {
     const [token, setToken] = useState('');
     const [charityAddress, setCharityAddress] = useState('');
     const [amount, setAmount] = useState('');
+    const [transactionHash, setTransactionHash] = useState('');
     const [loading, setLoading] = useState(false);
     
     useEffect(() => {
         async function getBalance(){
-            const { data } = await axios.get('balance/60df667606bfe2000629f6911c9ca9ad');
+            const { data } = await axios.get('balance/60e1348047688b00061b3fff87e4d7b7');
             console.log(data);
             setBalance(data.Balance);
             setGivingAddress(data.CurrentReceiveAddress);
@@ -41,17 +42,17 @@ function GrantCharities() {
             const payData = {
                 "amount": window.web3.utils.toWei(amount, 'Ether'),
                 "toAddress": charityAddress,
-                "walletId": "60dcfd0776918e0006fc8d532af66320",
+                "walletId": "60e1348047688b00061b3fff87e4d7b7",
                 "coinType": token
             }
             const { data } = await axios.put('sendtransaction', payData);
             console.log(data);
+            setTransactionHash(data.data.txid);
             setLoading(false);
         } catch(err) {
             console.error(err);
             setLoading(false);
         }
-        
     }
 
     return (
@@ -134,10 +135,16 @@ function GrantCharities() {
                         
                         {loading
                             ? <Spinner />
-                            : <button className="btn btn-primary btn-block" onClick={donateToCharities}>
+                            : <button
+                                className="btn btn-primary btn-block"
+                                onClick={donateToCharities}
+                                disabled={!charityAddress || !amount || !token}
+                            >
                                 Donate
                             </button>
                         }
+
+                        {transactionHash && <p className="mt-2 text-success">Success, {transactionHash}</p>}
                         </div>
                     </div>
                 </div>

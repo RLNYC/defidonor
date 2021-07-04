@@ -6,6 +6,7 @@ function GivingAccount({ walletAddress, charitableBlockchain }) {
     const [tokens, setTokens] = useState([]);
     const [token, setToken] = useState('ETH');
     const [amount, setAmount] = useState('');
+    const [transactionHash, setTransactionHash] = useState('');
 
     useEffect(() => {
         async function getUserTokens(){
@@ -21,10 +22,11 @@ function GivingAccount({ walletAddress, charitableBlockchain }) {
 
     const donateToCharities = async () => {
         const data = await charitableBlockchain.methods
-          .createReceipt(window.web3.utils.toWei(amount, 'Ether'), token, "0x14f5e38e6c965eb6af740d1031e9873ec0859d69")
+          .createReceipt(window.web3.utils.toWei(amount, 'Ether'), token, "0x90e64e83863d1b7d909ee4041e257f7a72458557")
           .send({ from: walletAddress, value: window.web3.utils.toWei(amount, 'Ether') });
         
         console.log(data);
+        setTransactionHash(data.transactionHash);
       }
 
     return (
@@ -90,6 +92,7 @@ function GivingAccount({ walletAddress, charitableBlockchain }) {
             <button className="btn btn-primary btn-lg mt-2" type="button" onClick={donateToCharities}>
                 Submit
             </button>
+            {transactionHash && <p className="mt-2 text-success">Success, {transactionHash}</p>}
         </div>
     )
 }

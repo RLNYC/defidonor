@@ -122,32 +122,39 @@ router.post('/createwallet', async (req, res, next) => {
 // PUT /api/bitgoapi/listwallets
 // Send a transaction from a multi-sig wallet at BitGo
 router.put('/sendtransaction', async (req, res, next) => {
-  const amount = req.body.amount;
-  const toAddress = req.body.toAddress;
-  const walletId = req.body.walletId;
-  const coinType = req.body.coinType;
+  try {
+    const amount = req.body.amount;
+    const toAddress = req.body.toAddress;
+    const walletId = req.body.walletId;
+    const coinType = req.body.coinType;
 
-  //await bitgo.unlock({ otp: '000000', duration: 3600 });
+    //await bitgo.unlock({ otp: '000000', duration: 3600 });
 
-  const basecoin = bitgo.coin(coinType);
-  const walletInstance = await basecoin.wallets().get({ id: walletId });
-  const transaction = await walletInstance.sendMany({
-    recipients: [
-      {
-        amount: amount,
-        address: toAddress
-      },
-    ],
-    walletPassphrase: walletPassphrase
-  });
+    const basecoin = bitgo.coin(coinType);
+    const walletInstance = await basecoin.wallets().get({ id: walletId });
+    const transaction = await walletInstance.sendMany({
+      recipients: [
+        {
+          amount: amount,
+          address: toAddress
+        },
+      ],
+      walletPassphrase: walletPassphrase
+    });
 
-  console.log('Wallet ID:', walletInstance.id());
-  console.log('Current Receive Address:', walletInstance.receiveAddress());
-  console.log('New Transaction:', JSON.stringify(transaction, null, 4));
+    console.log('Wallet ID:', walletInstance.id());
+    console.log('Current Receive Address:', walletInstance.receiveAddress());
+    console.log('New Transaction:', JSON.stringify(transaction, null, 4));
 
-  return res.status(200).json({
-    "data": transaction
-  });
+    return res.status(200).json({
+      "data": transaction
+    });
+  } catch(err){
+    console.dir(err, { depth: 100 });
+    return res.status(500).json({
+      "error": err
+    });
+  }
 });
 
 module.exports = router;
