@@ -26,8 +26,10 @@ function App() {
         <Route exact path="/grantcharities">
           <GrantCharities />
         </Route>
-        <Route path="">
-          <Home />
+        <Route path="/">
+          <Home
+            walletAddress={walletAddress}
+            charitableBlockchain={charitableBlockchain} />
         </Route>
     </Switch>
     </Router>

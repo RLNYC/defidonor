@@ -3,26 +3,59 @@ import { Link } from 'react-router-dom';
 
 import axios from '../axios';
 
-function Home() {
+function Home({ walletAddress, charitableBlockchain }) {
     const [balance, setBalance] = useState(0);
     const [transactions, setTransactions] = useState([]);
+    const [receipts, setReceipts] = useState([]);
     
     useEffect(() => {
         async function getBalance(){
-            const { data } = await axios.get('balance/60e1348047688b00061b3fff87e4d7b7');
+            const { data } = await axios.get('bitgoapi/balance/60e1348047688b00061b3fff87e4d7b7');
             console.log(data);
             setBalance(data.Balance);
         }
 
         async function getTransactions(){
-            const { data } = await axios.get('transfertransactions/60e1348047688b00061b3fff87e4d7b7');
+            const { data } = await axios.get('bitgoapi/transfertransactions/60e1348047688b00061b3fff87e4d7b7');
             console.log(data.WalletTransactions.transfers);
             setTransactions(data.WalletTransactions.transfers)
         }
 
         getBalance();
         getTransactions();
+        
     }, [])
+
+    useEffect(() => {
+        async function getReceiptNFT(){
+            const totalSupply = await charitableBlockchain.methods
+                .totalSupply()
+                .call();
+
+            console.log(totalSupply);
+
+            const temp = [];
+
+            for(let i = 1; i <= totalSupply; i++){
+                const ownerAddress = await charitableBlockchain.methods
+                    .ownerOf(i)
+                    .call();
+
+                if(ownerAddress === walletAddress){
+                    const url = await charitableBlockchain.methods
+                        .tokenURI(i)
+                        .call();
+
+                    temp.push(url);
+                }
+            }
+
+            setReceipts(temp);
+        }
+
+        if(charitableBlockchain) getReceiptNFT();
+    }, [charitableBlockchain])
+
     return (
         <div className="container">
             <div className="jumbotron pt-3 pb-3 mt-3 mb-3">
@@ -92,10 +125,17 @@ function Home() {
             </div>
 
             <h2 className="mt-4 h3">
-                Proof for Donatin Fund
+                Proof for Donation Fund
             </h2>
             <hr />
-            <p>None</p>
+            <div className="d-flex flex-column">
+                {receipts.map((receipt, index) => (
+                    <a style={{ fontSize: '1.4rem'}} key={index} href={`${receipt}/receipt.pdf`}  target="_blank" rel="noopener noreferrer">
+                        Receipt #{index + 1}
+                    </a>
+                ))}
+            </div>
+            
         </div>
     )
 }

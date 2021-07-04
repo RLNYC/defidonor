@@ -16,7 +16,7 @@ function GrantCharities() {
     
     useEffect(() => {
         async function getBalance(){
-            const { data } = await axios.get('balance/60e1348047688b00061b3fff87e4d7b7');
+            const { data } = await axios.get('bitgoapi/balance/60e1348047688b00061b3fff87e4d7b7');
             console.log(data);
             setBalance(data.Balance);
             setGivingAddress(data.CurrentReceiveAddress);

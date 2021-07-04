@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { COVALENTAPIKEY } from '../config';
+import axios from '../axios';
 
 function GivingAccount({ walletAddress, charitableBlockchain }) {
     const [tokens, setTokens] = useState([]);
@@ -21,12 +22,27 @@ function GivingAccount({ walletAddress, charitableBlockchain }) {
     }, [walletAddress])
 
     const donateToCharities = async () => {
-        const data = await charitableBlockchain.methods
-          .createReceipt(window.web3.utils.toWei(amount, 'Ether'), token, "0x90e64e83863d1b7d909ee4041e257f7a72458557")
-          .send({ from: walletAddress, value: window.web3.utils.toWei(amount, 'Ether') });
-        
-        console.log(data);
-        setTransactionHash(data.transactionHash);
+        try{
+            const userData = {
+                "sponsoringOrganization": "Red Cross",
+                "sentAddress": walletAddress,
+                "receiveAddress": "0x90e64e83863d1b7d909ee4041e257f7a72458557",
+                "assets": `${amount} ETH`,
+                "totalAssetValues": "$150"
+            }
+
+            const res = await axios.post('pdf/createreceipt', userData);
+            console.log(res);
+
+            const data = await charitableBlockchain.methods
+                .createReceiptandMint(res.data.url, "0x90e64e83863d1b7d909ee4041e257f7a72458557")
+                .send({ from: walletAddress, value: window.web3.utils.toWei(amount, 'Ether') });
+            
+            console.log(data);
+            setTransactionHash(data.transactionHash);
+        } catch(err) {
+            console.err(err);
+        }
       }
 
     return (
