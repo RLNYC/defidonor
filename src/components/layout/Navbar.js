@@ -58,10 +58,8 @@ function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setB
             console.log(data);
             setBitgoWalletId(data.WalletID);
         } catch(err) {
-            console.error(err);
-            
+            console.error(err);    
         }
-        
     }
 
     return (

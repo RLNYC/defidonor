@@ -12,7 +12,8 @@ function Home({ walletAddress, bitgoWalletId, charitableBlockchain }) {
         async function getBalance(){
             const { data } = await axios.get(`bitgoapi/balance/${bitgoWalletId}`);
             console.log(data);
-            setBalance(data.Balance);
+            let usd = await getETHtoUSD(data.Balance)
+            setBalance(usd);
         }
 
         async function getTransactions(){
@@ -57,6 +58,17 @@ function Home({ walletAddress, bitgoWalletId, charitableBlockchain }) {
         if(charitableBlockchain) getReceiptNFT();
     }, [charitableBlockchain])
 
+    const getETHtoUSD = async ethAmount => {
+        const usdValue = await charitableBlockchain.methods
+            .getThePrice()
+            .call();
+
+        let totalUSDValue = (usdValue * (ethAmount / 10 ** 18)) / 100000000;
+        console.log(totalUSDValue)
+        totalUSDValue = Number.parseFloat(totalUSDValue).toFixed(2);
+        return totalUSDValue;
+    }
+
     return (
         <div className="container">
             <div className="jumbotron pt-3 pb-3 mt-3 mb-3">
@@ -65,12 +77,17 @@ function Home({ walletAddress, bitgoWalletId, charitableBlockchain }) {
                         <h1 className="h1">
                             Welcome Guest
                         </h1>
-                        <p className="lead mb-0">
-                            Available to grant
-                        </p>
-                        <p className="h3 text-success">
-                            {balance / 10 ** 18} ETH
-                        </p>
+                        {charitableBlockchain && (
+                            <div>
+                                <p className="lead mb-0">
+                                    Available to grant
+                                </p>
+                                <p className="h3 text-success">
+                                    ${balance}
+                                </p>
+                            </div>
+                        )}
+                        
                     </div>
                     <div className="col-12 col-md-6">
                         <div className="d-flex">
@@ -110,14 +127,14 @@ function Home({ walletAddress, bitgoWalletId, charitableBlockchain }) {
                     </thead>
                     <tbody>
                         {transactions.map(transaction => (
-                            <tr key={transaction.txid}>
+                            <tr key={transaction.txid} className={transaction.type === "send" ? "text-danger" : "text-success"}>
                                 <th>
                                     {transaction.txid.substring(0, 6) + '...' + transaction.txid.substring(60, 66)}
                                 </th>
-                                <td>{transaction.coin}</td>
+                                <td>{transaction.coin.slice(1).toUpperCase()}</td>
                                 <td>{transaction.value / 10 ** 18}</td>
                                 <td>{transaction.type}</td>
-                                <td>{transaction.date}</td>
+                                <td>{transaction.date.toLocaleString()}</td>
                             </tr>
                         ))}
                         
@@ -125,7 +142,7 @@ function Home({ walletAddress, bitgoWalletId, charitableBlockchain }) {
                 </table>
             </div>
 
-            <h2 className="mt-4 h3">
+            <h2 className="mt-3 h3">
                 Proof for Donation Fund
             </h2>
             <hr />

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { COVALENTAPIKEY } from '../config';
 import axios from '../axios';
+import Spinner from '../components/Spinner';
 
 function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
     const [tokens, setTokens] = useState([]);
@@ -10,6 +11,7 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
     const [price, setPrice] = useState(0);
     const [transactionHash, setTransactionHash] = useState('');
     const [bitgoWalletAddress, setBitgoWalletAddress] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function getBitgoWalletAddress(){
@@ -48,10 +50,11 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
 
     const donateToCharities = async () => {
         try{
+            setLoading(true);
             const usdValue = await getETHtoUSD(amount);
 
             const userData = {
-                "sponsoringOrganization": "Red Cross",
+                "sponsoringOrganization": "DeFi Donors",
                 "sentAddress": walletAddress,
                 "receiveAddress": bitgoWalletAddress,
                 "assets": `${amount} ETH`,
@@ -66,9 +69,11 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
                 .send({ from: walletAddress, value: window.web3.utils.toWei(amount, 'Ether') });
             
             console.log(data);
+            setLoading(false);
             setTransactionHash(data.transactionHash);
         } catch(err) {
             console.error(err);
+            setLoading(false);
         }
       }
 
@@ -104,43 +109,65 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
                                    </div>
                                 </td>
                                 <td>{token.balance / 10 ** 18}</td>
-                                <td>${token.quote_rate || 0}</td>
-                                <td>${token.quote}</td>
+                                <td>${Number.parseFloat(token.quote_rate || 0).toFixed(2)}</td>
+                                <td>${Number.parseFloat(token.quote).toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
 
-            <div className="input-group">
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Amount"
-                    value={amount}
-                    onChange={handleAmount} />
-                <div className="input-group-append w-50">
-                    <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {token}
-                    </button>
-                    <div className="dropdown-menu">
-                        {tokens.map(token => (
-                            <p key={token.contract_name} className="mx-4 my-2">
-                                {token.contract_ticker_symbol}
+            <div className="row">
+                <div className="col-12 col-md-5">
+                    <div className="card mt-1">
+                        <div className="card-body">
+                            <div className="input-group">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Amount"
+                                    value={amount}
+                                    onChange={handleAmount}/>
+                                <div className="input-group-append w-50">
+                                    <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        {token}
+                                    </button>
+                                    <div className="dropdown-menu">
+                                        {tokens.map(token => (
+                                            <p key={token.contract_name} className="mx-4 my-2">
+                                                {token.contract_ticker_symbol}
+                                            </p>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p className="mt-1 mb-1" style={{ fontSize: '1.6rem'}}>
+                                ${price}
                             </p>
-                        ))}
+
+                            {loading
+                                ? <Spinner />
+                                : <button
+                                    className="btn btn-primary mt-2"
+                                    type="button"
+                                    onClick={donateToCharities}
+                                    disabled={!amount}>
+                                    Fund Giving Account
+                                </button>
+                            }
+                            {transactionHash &&
+                                <p className="mt-2 text-success" style={{ fontSize: '1.4rem'}}>
+                                    Success, see transaction {" "}
+                                    <a href={`https://kovan.etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">
+                                        {transactionHash.substring(0, 10) + '...' + transactionHash.substring(56, 66)}
+                                    </a>
+                                </p>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <p className="mt-1 mb-1" style={{ fontSize: '1.6rem'}}>
-                ${price}
-            </p>
-
-            <button className="btn btn-primary btn-lg mt-2" type="button" onClick={donateToCharities}>
-                Submit
-            </button>
-            {transactionHash && <p className="mt-2 text-success">Success, {transactionHash}</p>}
         </div>
     )
 }

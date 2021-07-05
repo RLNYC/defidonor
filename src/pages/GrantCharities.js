@@ -104,8 +104,8 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain }) {
                                    </div>
                                 </td>
                                 <td>{token.balance / 10 ** 18}</td>
-                                <td>${token.quote_rate || 0}</td>
-                                <td>${token.quote}</td>
+                                <td>${Number.parseFloat(token.quote_rate || 0).toFixed(2)}</td>
+                                <td>${Number.parseFloat(token.quote).toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -121,13 +121,13 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain }) {
                             <label htmlFor="text">Charity List</label>
                             <select className="custom-select" onChange={(e) => setCharityAddress(e.target.value)}>
                                 <option value="">Select Chartiy</option>
-                                <option value="0x83eb0e2e36da037d4a2f9145a2544252421d52d0">Joe</option>
-                                <option value="0x41026a0c3880e0c6d19b0cdbb421f587f3029f40">Bob</option>
+                                <option value="0x83eb0e2e36da037d4a2f9145a2544252421d52d0">Red Cross</option>
+                                <option value="0x41026a0c3880e0c6d19b0cdbb421f587f3029f40">Pet Shelter</option>
                             </select>
                         </div>
 
                         <div className="d-flex">
-                            <div className="form-group" style={{ width: '80%'}}>
+                            <div className="form-group">
                                 <label>Amount</label>
                                 <input
                                     className="form-control"
@@ -161,11 +161,18 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain }) {
                                 onClick={donateToCharities}
                                 disabled={!charityAddress || !amount || !token}
                             >
-                                Donate
+                                Donate to Charity
                             </button>
                         }
 
-                        {transactionHash && <p className="mt-2 text-success">Success, {transactionHash}</p>}
+                        {transactionHash &&
+                            <p className="mt-2 text-success" style={{ fontSize: '1.4rem'}}>
+                                Success, see transaction {" "}
+                                <a href={`https://kovan.etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">
+                                    {transactionHash.substring(0, 10) + '...' + transactionHash.substring(56, 66)}
+                                </a>
+                            </p>
+                        }
                         </div>
                     </div>
                 </div>
