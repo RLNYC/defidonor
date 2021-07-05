@@ -7,6 +7,7 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
     const [tokens, setTokens] = useState([]);
     const [token, setToken] = useState('ETH');
     const [amount, setAmount] = useState('');
+    const [price, setPrice] = useState(0);
     const [transactionHash, setTransactionHash] = useState('');
     const [bitgoWalletAddress, setBitgoWalletAddress] = useState('');
 
@@ -29,14 +30,32 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
         if(bitgoWalletId) getBitgoWalletAddress();
     }, [walletAddress])
 
+    const handleAmount = async e => {
+        setAmount(e.target.value);
+        const totalUSDValue = await getETHtoUSD(e.target.value);
+        setPrice(totalUSDValue);
+    }
+
+    const getETHtoUSD = async ETHvalue => {
+        const usdValue = await charitableBlockchain.methods
+            .getThePrice()
+            .call();
+
+        let totalUSDValue = (usdValue * ETHvalue) / 100000000;
+        totalUSDValue = Number.parseFloat(totalUSDValue).toFixed(2);
+        return totalUSDValue;
+    }
+
     const donateToCharities = async () => {
         try{
+            const usdValue = await getETHtoUSD(amount);
+
             const userData = {
                 "sponsoringOrganization": "Red Cross",
                 "sentAddress": walletAddress,
                 "receiveAddress": bitgoWalletAddress,
                 "assets": `${amount} ETH`,
-                "totalAssetValues": "$150"
+                "totalAssetValues": `$${usdValue}`
             }
 
             const res = await axios.post('pdf/createreceipt', userData);
@@ -49,7 +68,7 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
             console.log(data);
             setTransactionHash(data.transactionHash);
         } catch(err) {
-            console.err(err);
+            console.error(err);
         }
       }
 
@@ -99,7 +118,7 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
                     className="form-control"
                     placeholder="Amount"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)} />
+                    onChange={handleAmount} />
                 <div className="input-group-append w-50">
                     <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {token}
@@ -113,6 +132,11 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
                     </div>
                 </div>
             </div>
+
+            <p className="mt-1 mb-1" style={{ fontSize: '1.6rem'}}>
+                ${price}
+            </p>
+
             <button className="btn btn-primary btn-lg mt-2" type="button" onClick={donateToCharities}>
                 Submit
             </button>

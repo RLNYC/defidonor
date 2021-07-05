@@ -4,13 +4,14 @@ import axios from '../axios';
 import { COVALENTAPIKEY } from '../config';
 import Spinner from '../components/Spinner';
 
-function GrantCharities({ bitgoWalletId }) {
+function GrantCharities({ bitgoWalletId, charitableBlockchain }) {
     const [givingAddress, setGivingAddress] = useState('');
     const [balance, setBalance] = useState(0);
     const [tokens, setTokens] = useState([]);
     const [token, setToken] = useState('');
     const [charityAddress, setCharityAddress] = useState('');
     const [amount, setAmount] = useState('');
+    const [price, setPrice] = useState(0);
     const [transactionHash, setTransactionHash] = useState('');
     const [loading, setLoading] = useState(false);
     
@@ -53,6 +54,22 @@ function GrantCharities({ bitgoWalletId }) {
             console.error(err);
             setLoading(false);
         }
+    }
+
+    const handleAmount = async e => {
+        setAmount(e.target.value);
+        const totalUSDValue = await getETHtoUSD(e.target.value);
+        setPrice(totalUSDValue);
+    }
+
+    const getETHtoUSD = async ETHvalue => {
+        const usdValue = await charitableBlockchain.methods
+            .getThePrice()
+            .call();
+
+        let totalUSDValue = (usdValue * ETHvalue) / 100000000;
+        totalUSDValue = Number.parseFloat(totalUSDValue).toFixed(2);
+        return totalUSDValue;
     }
 
     return (
@@ -118,7 +135,7 @@ function GrantCharities({ bitgoWalletId }) {
                                     type="number"
                                     name="amount"
                                     value={amount}
-                                    onChange={(e) => setAmount(e.target.value)} 
+                                    onChange={handleAmount} 
                                 />
                             </div>
                             <div className="form-group" style={{ marginTop: '2rem'}}>
@@ -132,6 +149,10 @@ function GrantCharities({ bitgoWalletId }) {
                                 </select>
                             </div>
                         </div>
+
+                        <p style={{ fontSize: '1.6rem'}}>
+                            ${price}
+                        </p>
                         
                         {loading
                             ? <Spinner />

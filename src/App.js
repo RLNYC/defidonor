@@ -27,7 +27,9 @@ function App() {
              charitableBlockchain={charitableBlockchain} />
         </Route>
         <Route exact path="/grantcharities">
-          <GrantCharities bitgoWalletId={bitgoWalletId} />
+          <GrantCharities
+            bitgoWalletId={bitgoWalletId}
+            charitableBlockchain={charitableBlockchain} />
         </Route>
         <Route path="/">
           <Home

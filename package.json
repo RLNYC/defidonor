@@ -52,7 +52,8 @@
     ]
   },
   "devDependencies": {
-    "nodemon": "^2.0.9",
-    "@openzeppelin/contracts": "^3.4.0"
+    "@chainlink/contracts": "^0.1.6",
+    "@openzeppelin/contracts": "^3.4.0",
+    "nodemon": "^2.0.9"
   }
 }
