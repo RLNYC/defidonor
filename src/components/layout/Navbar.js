@@ -68,11 +68,11 @@ function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setB
         <nav className="navbar navbar-light bg-light">
             <div className="container">
                 <Link className="navbar-brand mb-0 h1 p-0" to="/">
-                    Logo
+                    <img style={{ width: '140px' }} src="./logo.jpg" alt="Logo" />
                 </Link>
                 <div className="d-flex align-items-center">
                     <button
-                        className="btn btn-warning btn-lg my-2 my-sm-0"
+                        className="btn btn-warning my-2 my-sm-0"
                         onClick={connetToWallet}
                     >
                         {walletAddress
