@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk';
 import Web3 from 'web3';
 
 import axios from '../../axios';
@@ -62,6 +63,15 @@ function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setB
         }
     }
 
+    function openRamp(){
+        new RampInstantSDK({
+            hostAppName: 'DeFi Donors',
+            hostLogoUrl: 'https://raw.githubusercontent.com/RLNYC/ethGlobalHackMoney/master/public/logo.jpg',
+            userAddress: '',
+            url: 'https://ri-widget-staging-kovan.firebaseapp.com/'
+          }).show();
+    }
+
     return (
         <nav className="navbar navbar-light bg-light">
             <div className="container">
@@ -69,6 +79,12 @@ function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setB
                     <img style={{ width: '140px' }} src="./logo.jpg" alt="Logo" />
                 </Link>
                 <div className="d-flex align-items-center">
+                    <button
+                        className="btn btn-success my-2 my-sm-0 mr-2"
+                        onClick={openRamp}
+                    >
+                        Open Ramp
+                    </button>
                     <button
                         className="btn btn-warning my-2 my-sm-0"
                         onClick={connetToWallet}
