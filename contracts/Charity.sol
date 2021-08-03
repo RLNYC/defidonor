@@ -10,13 +10,18 @@ contract Charity is ERC721 {
   AggregatorV3Interface internal priceFeed;
 
   /**
-  * Network: Kovan
+  * Network: Kovan Testnet
   * Aggregator: ETH/USD
   * Address: 0x9326BFA02ADD2366b30bacB125260Af641031331
   */
+  /**
+  * Network: Rinkeby Testnet
+  * Aggregator: ETH/USD
+  * Address: 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
+  */
   constructor(Token _token) ERC721("DeFi Donor", "DFD") public {
     token = _token;
-    priceFeed = AggregatorV3Interface(0x9326BFA02ADD2366b30bacB125260Af641031331);
+    priceFeed = AggregatorV3Interface(0x8A753747A1Fa494EC906cE90E9f37563A8AF630e);
   }
   
   event Receipt (
@@ -28,13 +33,14 @@ contract Charity is ERC721 {
   );
 
   function createReceiptandMint(string memory _tokenURI, address payable _receipt) public payable {
-    _receipt.transfer(msg.value);
+    //_receipt.transfer(msg.value);
 
     uint _tokenId = totalSupply().add(1);
     _safeMint(msg.sender, _tokenId);
     _setTokenURI(_tokenId, _tokenURI);
 
-    token.mint(_receipt, msg.value);
+    // Eth value times 100
+    token.mint(_receipt, msg.value * 100);
 
     emit Receipt(_tokenId, now, _tokenURI, msg.sender, _receipt);
   }
