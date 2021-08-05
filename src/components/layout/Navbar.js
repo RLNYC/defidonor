@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk';
+import CPK, { Web3Adapter } from 'contract-proxy-kit';
 import Web3 from 'web3';
 
 import axios from '../../axios';
 import CharitableBlockchain from '../../abis/Charity.json';
 
-function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setBitgoWalletId }) {
+function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setBitgoWalletId, setSafeAddress, setCPK }) {
     const connetToWallet = async () => {
         if (window.ethereum) {
             window.web3 = new Web3(window.ethereum);
@@ -38,7 +39,15 @@ function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setB
             window.alert('Contract is not deployed to detected network')
         }
 
-        getBitgoWalletId(accounts[0]);
+        const ethLibAdapter = new Web3Adapter({ web3 });
+        const res = await CPK.create({ ethLibAdapter, ownerAccount: walletAddress })
+
+        console.log(res);
+        console.log(res.address);
+        setSafeAddress(res.address);
+        setCPK(res);
+
+        //getBitgoWalletId(accounts[0]);
     }
 
     async function getBitgoWalletId(address){
