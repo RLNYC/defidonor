@@ -5,11 +5,12 @@ import axios from '../axios';
 import { COVALENTAPIKEY } from '../config';
 import Spinner from '../components/Spinner';
 
-function GrantCharities({ bitgoWalletId, charitableBlockchain, cpk, tokenBlockchain }) {
+function GrantCharities({ bitgoWalletId, charitableBlockchain, safeAddress, cpk, tokenBlockchain }) {
     const [givingAddress, setGivingAddress] = useState('');
     const [balance, setBalance] = useState(0);
     const [tokens, setTokens] = useState([]);
     const [token, setToken] = useState('');
+    const [dtoken, setdtoken] = useState('');
     const [charityAddress, setCharityAddress] = useState('');
     const [amount, setAmount] = useState('');
     const [friendAddress, setFriendAddress] = useState('');
@@ -41,6 +42,15 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain, cpk, tokenBlockch
 
     //     if(givingAddress) getUserTokens();
     // }, [givingAddress])
+
+    useEffect(() => {
+        async function getTokenAmount(){
+            const amount = await tokenBlockchain.methods.balanceOf(safeAddress).call();
+            setdtoken(amount);
+        }
+        
+        if(safeAddress) getTokenAmount();
+    }, [tokenBlockchain, safeAddress])
 
     const donateToCharities = async () => {
         try{
@@ -118,7 +128,7 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain, cpk, tokenBlockch
                         </tr>
                     </thead>
                     <tbody>
-                        {tokens.map(token => (
+                        {/* {tokens.map(token => (
                             <tr key={token.contract_name}>
                                 <td className="d-flex align-items-center">
                                    <img src={token.logo_url} alt="token" style={{ width: '2rem' }} />
@@ -135,7 +145,22 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain, cpk, tokenBlockch
                                 <td>${Number.parseFloat(token.quote_rate || 0).toFixed(2)}</td>
                                 <td>${Number.parseFloat(token.quote).toFixed(2)}</td>
                             </tr>
-                        ))}
+                        ))} */}
+                        <tr>
+                            <td className="d-flex align-items-center">
+                                <div className="ml-4">
+                                    <p className="m-0">
+                                        D Token
+                                    </p>
+                                    <p className="m-0">
+                                        DToken
+                                    </p>
+                                </div>
+                            </td>
+                            <td>{dtoken / 10 ** 18}</td>
+                            <td>$1</td>
+                            <td>$0</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

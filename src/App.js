@@ -39,6 +39,7 @@ function App() {
           <GrantCharities
             bitgoWalletId={bitgoWalletId}
             charitableBlockchain={charitableBlockchain}
+            safeAddress={safeAddress}
             cpk={cpk}
             tokenBlockchain={tokenBlockchain} />
         </Route>

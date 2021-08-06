@@ -1,35 +1,47 @@
 import React, { useEffect, useState } from 'react';
+import CPK, { Web3Adapter } from 'contract-proxy-kit';
 
 import { COVALENTAPIKEY } from '../config';
 import axios from '../axios';
 import Spinner from '../components/Spinner';
 
-function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
+function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain, safeAddress, cpk, tokenBlockchain }) {
     const [tokens, setTokens] = useState([]);
     const [token, setToken] = useState('ETH');
+    const [eth, seteth] = useState('');
+    const [ethPrice, setethPrice] = useState('');
     const [amount, setAmount] = useState('');
     const [price, setPrice] = useState(0);
     const [transactionHash, setTransactionHash] = useState('');
-    const [bitgoWalletAddress, setBitgoWalletAddress] = useState('');
+    const [bitgoWalletAddress, setBitgoWalletAddress] = useState('0xEF514aC3d2ec10ba140ECaC00919A94C4eC2a308');
     const [loading, setLoading] = useState(false);
 
+    // useEffect(() => {
+    //     async function getBitgoWalletAddress(){
+    //         const { data } = await axios.get(`bitgoapi/balance/${bitgoWalletId}`);
+    //         console.log(data);
+    //         setBitgoWalletAddress(data.CurrentReceiveAddress);
+    //     }
+
+    //     async function getUserTokens(){
+    //         const res = await fetch(`https://api.covalenthq.com/v1/4/address/${walletAddress}/balances_v2/?key=${COVALENTAPIKEY}`);
+    //         console.log("walletAddress", walletAddress)
+    //         const { data } = await res.json();
+    //         console.log(data);
+    //         setTokens(data.items);
+    //     }
+
+    //     getUserTokens();
+    //     if(bitgoWalletId) getBitgoWalletAddress();
+    // }, [walletAddress])
+
     useEffect(() => {
-        async function getBitgoWalletAddress(){
-            const { data } = await axios.get(`bitgoapi/balance/${bitgoWalletId}`);
-            console.log(data);
-            setBitgoWalletAddress(data.CurrentReceiveAddress);
+        async function getETHAmount(){
+            const ethBalance = await window.web3.eth.getBalance(walletAddress);
+            seteth(ethBalance);
         }
-
-        async function getUserTokens(){
-            const res = await fetch(`https://api.covalenthq.com/v1/42/address/${walletAddress}/balances_v2/?key=${COVALENTAPIKEY}`);
-            console.log("walletAddress", walletAddress)
-            const { data } = await res.json();
-            console.log(data);
-            setTokens(data.items);
-        }
-
-        getUserTokens();
-        if(bitgoWalletId) getBitgoWalletAddress();
+        
+        if(walletAddress) getETHAmount();
     }, [walletAddress])
 
     const handleAmount = async e => {
@@ -65,7 +77,7 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
             console.log(res);
 
             const data = await charitableBlockchain.methods
-                .createReceiptandMint(res.data.url, bitgoWalletAddress)
+                .createReceiptandMint(res.data.url, safeAddress)
                 .send({ from: walletAddress, value: window.web3.utils.toWei(amount, 'Ether') });
             
             console.log(data);
@@ -95,7 +107,7 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {tokens.map(token => (
+                        {/* {tokens.map(token => (
                             <tr key={token.contract_name}>
                                 <td className="d-flex align-items-center">
                                    <img src={token.logo_url} alt="token" style={{ width: '2rem' }} />
@@ -112,7 +124,22 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
                                 <td>${Number.parseFloat(token.quote_rate || 0).toFixed(2)}</td>
                                 <td>${Number.parseFloat(token.quote).toFixed(2)}</td>
                             </tr>
-                        ))}
+                        ))} */}
+                        <tr>
+                            <td className="d-flex align-items-center">
+                                <div className="ml-4">
+                                    <p className="m-0">
+                                        Ethereum
+                                    </p>
+                                    <p className="m-0">
+                                        Eth
+                                    </p>
+                                </div>
+                            </td>
+                            <td>{eth / 10 ** 18}</td>
+                            <td>null</td>
+                            <td>null</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -159,7 +186,7 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain }) {
                             {transactionHash &&
                                 <p className="mt-2 text-success" style={{ fontSize: '1.4rem'}}>
                                     Success, see transaction {" "}
-                                    <a href={`https://kovan.etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">
+                                    <a href={`https://rinkeby.etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">
                                         {transactionHash.substring(0, 10) + '...' + transactionHash.substring(56, 66)}
                                     </a>
                                 </p>
