@@ -1,41 +1,46 @@
 import React, { useEffect, useState } from 'react';
+import CPK from 'contract-proxy-kit';
 
 import axios from '../axios';
 import { COVALENTAPIKEY } from '../config';
 import Spinner from '../components/Spinner';
 
-function GrantCharities({ bitgoWalletId, charitableBlockchain }) {
+function GrantCharities({ bitgoWalletId, charitableBlockchain, cpk, tokenBlockchain }) {
     const [givingAddress, setGivingAddress] = useState('');
     const [balance, setBalance] = useState(0);
     const [tokens, setTokens] = useState([]);
     const [token, setToken] = useState('');
     const [charityAddress, setCharityAddress] = useState('');
     const [amount, setAmount] = useState('');
+    const [friendAddress, setFriendAddress] = useState('');
+    const [friendAmount, setFriendAmount] = useState('');
     const [price, setPrice] = useState(0);
     const [transactionHash, setTransactionHash] = useState('');
+    const [transactionHash2, setTransactionHash2] = useState('');
     const [loading, setLoading] = useState(false);
+    const [loading2, setLoading2] = useState(false);
     
-    useEffect(() => {
-        async function getBalance(){
-            const { data } = await axios.get(`bitgoapi/balance/${bitgoWalletId}`);
-            console.log(data);
-            setBalance(data.Balance);
-            setGivingAddress(data.CurrentReceiveAddress);
-        }
+    // useEffect(() => {
+    //     async function getBalance(){
+    //         const { data } = await axios.get(`bitgoapi/balance/${bitgoWalletId}`);
+    //         console.log(data);
+    //         setBalance(data.Balance);
+    //         setGivingAddress(data.CurrentReceiveAddress);
+    //     }
 
-        getBalance();
-    }, [bitgoWalletId])
+    //     getBalance();
+    // }, [bitgoWalletId])
 
-    useEffect(() => {
-        async function getUserTokens(){
-            const res = await fetch(`https://api.covalenthq.com/v1/42/address/${givingAddress}/balances_v2/?key=${COVALENTAPIKEY}`);
-            const { data } = await res.json();
-            console.log(data);
-            setTokens(data.items);
-        }
+    // useEffect(() => {
+    //     async function getUserTokens(){
+    //         const res = await fetch(`https://api.covalenthq.com/v1/42/address/${givingAddress}/balances_v2/?key=${COVALENTAPIKEY}`);
+    //         const { data } = await res.json();
+    //         console.log(data);
+    //         setTokens(data.items);
+    //     }
 
-        if(givingAddress) getUserTokens();
-    }, [givingAddress])
+    //     if(givingAddress) getUserTokens();
+    // }, [givingAddress])
 
     const donateToCharities = async () => {
         try{
@@ -53,6 +58,29 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain }) {
         } catch(err) {
             console.error(err);
             setLoading(false);
+        }
+    }
+
+    const donateToFriend = async () => {
+        try{
+            setLoading2(true);
+            const txs = [
+                {
+                    operation: CPK.Call,
+                    // Token Address
+                    to: "0xdc5d1EB6B42F04eA92c1c026C09723034c254426",
+                    value: 0,
+                    data: tokenBlockchain.methods.transfer(friendAddress, window.web3.utils.toWei(friendAmount, 'Ether')).encodeABI()
+                  }
+            ]
+        
+            const txObject = await cpk.execTransactions(txs);
+            console.log(txObject)
+            setTransactionHash2(txObject.hash);
+            setLoading2(false);
+        } catch(err) {
+            console.error(err);
+            setLoading2(false);
         }
     }
 
@@ -168,11 +196,60 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain }) {
                         {transactionHash &&
                             <p className="mt-2 text-success" style={{ fontSize: '1.4rem'}}>
                                 Success, see transaction {" "}
-                                <a href={`https://kovan.etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">
+                                <a href={`https://rinkeby.etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">
                                     {transactionHash.substring(0, 10) + '...' + transactionHash.substring(56, 66)}
                                 </a>
                             </p>
                         }
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="col-12 col-md-6">
+                    <div className="card mt-1">
+                        <div className="card-body">
+
+                            <div className="form-group">
+                                <label>Friend Address</label>
+                                <input
+                                    className="form-control"
+                                    name="friendAddress"
+                                    value={friendAddress}
+                                    onChange={(e) => setFriendAddress(e.target.value)} 
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Amount</label>
+                                <input
+                                    className="form-control"
+                                    
+                                    type="number"
+                                    name="amount"
+                                    value={friendAmount}
+                                    onChange={(e) => setFriendAmount(e.target.value)} 
+                                />
+                            </div>
+                            
+                            {loading2
+                                ? <Spinner />
+                                : <button
+                                    className="btn btn-primary btn-block"
+                                    onClick={donateToFriend}
+                                    disabled={!friendAddress || !friendAmount}
+                                >
+                                    Send token to friend
+                                </button>
+                            }
+
+                            {transactionHash2 &&
+                                <p className="mt-2 text-success" style={{ fontSize: '1.4rem'}}>
+                                    Success, see transaction {" "}
+                                    <a href={`https://rinkeby.etherscan.io/tx/${transactionHash2}`} target="_blank" rel="noopener noreferrer">
+                                        {transactionHash2.substring(0, 10) + '...' + transactionHash2.substring(56, 66)}
+                                    </a>
+                                </p>
+                            }
                         </div>
                     </div>
                 </div>

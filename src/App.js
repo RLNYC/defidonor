@@ -13,6 +13,7 @@ function App() {
   const [safeAddress, setSafeAddress] = useState('');
   const [cpk, setCPK] = useState(null);
   const [charitableBlockchain, setCharitableBlockchain] = useState(null);
+  const [tokenBlockchain, setTokenBlockchain] = useState(null);
   
   return (
     <Router className="App">
@@ -22,7 +23,8 @@ function App() {
         setCharitableBlockchain={setCharitableBlockchain}
         setBitgoWalletId={setBitgoWalletId}
         setSafeAddress={setSafeAddress}
-        setCPK={setCPK} />
+        setCPK={setCPK}
+        setTokenBlockchain={setTokenBlockchain} />
       <Switch>
         <Route exact path="/givingaccount">
           <GivingAccount
@@ -30,12 +32,15 @@ function App() {
              bitgoWalletId={bitgoWalletId}
              charitableBlockchain={charitableBlockchain}
              safeAddress={safeAddress}
-             cpk={cpk} />
+             cpk={cpk}
+             tokenBlockchain={tokenBlockchain} />
         </Route>
         <Route exact path="/grantcharities">
           <GrantCharities
             bitgoWalletId={bitgoWalletId}
-            charitableBlockchain={charitableBlockchain} />
+            charitableBlockchain={charitableBlockchain}
+            cpk={cpk}
+            tokenBlockchain={tokenBlockchain} />
         </Route>
         <Route path="/">
           <Home

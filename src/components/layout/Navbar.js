@@ -5,9 +5,10 @@ import CPK, { Web3Adapter } from 'contract-proxy-kit';
 import Web3 from 'web3';
 
 import axios from '../../axios';
+import Token from '../../abis/Token.json';
 import CharitableBlockchain from '../../abis/Charity.json';
 
-function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setBitgoWalletId, setSafeAddress, setCPK }) {
+function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setBitgoWalletId, setSafeAddress, setCPK, setTokenBlockchain }) {
     const connetToWallet = async () => {
         if (window.ethereum) {
             window.web3 = new Web3(window.ethereum);
@@ -35,6 +36,9 @@ function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setB
 
             const blockchain = new web3.eth.Contract(abi, address);
             setCharitableBlockchain(blockchain);
+
+            const token = new web3.eth.Contract(Token.abi, Token.networks[networkId].address);
+            setTokenBlockchain(token);
         } else {
             window.alert('Contract is not deployed to detected network')
         }
