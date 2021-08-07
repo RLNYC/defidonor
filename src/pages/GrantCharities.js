@@ -78,7 +78,7 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain, safeAddress, cpk,
                 {
                     operation: CPK.Call,
                     // Token Address
-                    to: "0xdc5d1EB6B42F04eA92c1c026C09723034c254426",
+                    to: "0x0dfeb92a750b9442d5a08167c33310fc5f641850",
                     value: 0,
                     data: tokenBlockchain.methods.transfer(friendAddress, window.web3.utils.toWei(friendAmount, 'Ether')).encodeABI()
                   }
@@ -150,10 +150,10 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain, safeAddress, cpk,
                             <td className="d-flex align-items-center">
                                 <div className="ml-4">
                                     <p className="m-0">
-                                        D Token
+                                        Give Token
                                     </p>
                                     <p className="m-0">
-                                        DToken
+                                        GToken
                                     </p>
                                 </div>
                             </td>

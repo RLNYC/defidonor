@@ -7,7 +7,7 @@ contract Token is ERC20 {
 
     event MinterChanged(address indexed from, address to);
 
-    constructor() public payable ERC20("F Dai", "FDai") {
+    constructor() public payable ERC20("Give Token", "GToken") {
         minter = msg.sender;
     }
 
