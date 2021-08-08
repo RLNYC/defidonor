@@ -10,6 +10,8 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain, safeAddress, cpk,
     const [balance, setBalance] = useState(0);
     const [tokens, setTokens] = useState([]);
     const [token, setToken] = useState('');
+    const [eth, seteth] = useState('');
+    const [ethPrice, setethPrice] = useState('');
     const [dtoken, setdtoken] = useState('');
     const [charityAddress, setCharityAddress] = useState('');
     const [amount, setAmount] = useState('');
@@ -44,12 +46,20 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain, safeAddress, cpk,
     // }, [givingAddress])
 
     useEffect(() => {
-        async function getTokenAmount(){
+        async function getTokensAmount(){
             const amount = await tokenBlockchain.methods.balanceOf(safeAddress).call();
             setdtoken(amount);
+
+            const ethBalance = await window.web3.eth.getBalance(safeAddress);
+            seteth(ethBalance);
+
+            const usdValue = await charitableBlockchain.methods
+                .getThePrice()
+                .call();
+            setethPrice(usdValue);
         }
         
-        if(safeAddress) getTokenAmount();
+        if(safeAddress) getTokensAmount();
     }, [tokenBlockchain, safeAddress])
 
     const donateToCharities = async () => {
@@ -148,18 +158,48 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain, safeAddress, cpk,
                         ))} */}
                         <tr>
                             <td className="d-flex align-items-center">
-                                <div className="ml-4">
+                                <div>
+                                    <p className="m-0">
+                                        Ethereum
+                                    </p>
+                                    <p className="m-0">
+                                        ETH
+                                    </p>
+                                </div>
+                            </td>
+                            <td>{eth / 10 ** 18}</td>
+                            <td>${Number.parseFloat(ethPrice / 100000000).toFixed(2)}</td>
+                            <td>${Number.parseFloat((eth / 10 ** 18) * (ethPrice / 100000000)).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td className="d-flex align-items-center">
+                                <div>
                                     <p className="m-0">
                                         Give Token
                                     </p>
                                     <p className="m-0">
-                                        GToken
+                                        GTOKEN
                                     </p>
                                 </div>
                             </td>
                             <td>{dtoken / 10 ** 18}</td>
                             <td>$1</td>
-                            <td>$0</td>
+                            <td>${(dtoken / 10 ** 18) * 1}</td>
+                        </tr>
+                        <tr>
+                            <td className="d-flex align-items-center">
+                                <div>
+                                    <p className="m-0">
+                                        Bitcoin
+                                    </p>
+                                    <p className="m-0">
+                                        BTC
+                                    </p>
+                                </div>
+                            </td>
+                            <td>0.005</td>
+                            <td>$43,987.86</td>
+                            <td>${0.005 * 43,987.86}</td>
                         </tr>
                     </tbody>
                 </table>

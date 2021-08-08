@@ -39,8 +39,8 @@ contract Charity is ERC721 {
     _safeMint(msg.sender, _tokenId);
     _setTokenURI(_tokenId, _tokenURI);
 
-    // Eth value times 100
-    token.mint(_receipt, msg.value * 100);
+    // Eth value times 3000
+    token.mint(_receipt, msg.value * 3000);
 
     emit Receipt(_tokenId, now, _tokenURI, msg.sender, _receipt);
   }

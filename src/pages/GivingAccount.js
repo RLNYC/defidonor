@@ -39,6 +39,11 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain, saf
         async function getETHAmount(){
             const ethBalance = await window.web3.eth.getBalance(walletAddress);
             seteth(ethBalance);
+
+            const usdValue = await charitableBlockchain.methods
+                .getThePrice()
+                .call();
+            setethPrice(usdValue);
         }
         
         if(walletAddress) getETHAmount();
@@ -54,7 +59,7 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain, saf
         const usdValue = await charitableBlockchain.methods
             .getThePrice()
             .call();
-
+            
         let totalUSDValue = (usdValue * ETHvalue) / 100000000;
         totalUSDValue = Number.parseFloat(totalUSDValue).toFixed(2);
         return totalUSDValue;
@@ -137,8 +142,8 @@ function GivingAccount({ walletAddress, bitgoWalletId, charitableBlockchain, saf
                                 </div>
                             </td>
                             <td>{eth / 10 ** 18}</td>
-                            <td>null</td>
-                            <td>null</td>
+                            <td>${Number.parseFloat(ethPrice / 100000000).toFixed(2)}</td>
+                            <td>${Number.parseFloat((eth / 10 ** 18) * (ethPrice / 100000000)).toFixed(2)}</td>
                         </tr>
                     </tbody>
                 </table>
