@@ -88,7 +88,7 @@ function GrantCharities({ bitgoWalletId, charitableBlockchain, safeAddress, cpk,
                 {
                     operation: CPK.Call,
                     // Token Address
-                    to: "0x0dfeb92a750b9442d5a08167c33310fc5f641850",
+                    to: "0xf4f71F0b6319600E666a7b6B48E7e61cFB989248",
                     value: 0,
                     data: tokenBlockchain.methods.transfer(friendAddress, window.web3.utils.toWei(friendAmount, 'Ether')).encodeABI()
                   }

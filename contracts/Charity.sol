@@ -9,6 +9,10 @@ contract Charity is ERC721 {
   Token private token;
   AggregatorV3Interface internal priceFeed;
 
+  uint public holderCount = 0;
+  mapping(uint => address) public holderList;
+  uint256 REWARDAMOUNT = 1000000000000000000;     // 10 Tokens
+
   /**
   * Network: Kovan Testnet
   * Aggregator: ETH/USD
@@ -35,6 +39,19 @@ contract Charity is ERC721 {
   function createReceiptandMint(string memory _tokenURI, address payable _receipt) public payable {
     //_receipt.transfer(msg.value);
 
+    // Send reward
+    for(uint i = 1; i < holderCount + 1; i++){
+      uint256 percent = (token.balanceOf(holderList[i]) * 100) / token.totalSupply();
+      uint256 amount = (REWARDAMOUNT * percent) / 100;
+      token.mint(holderList[i], amount);
+    }
+
+    if(token.balanceOf(_receipt) == 0){
+      holderCount++;
+      holderList[holderCount] = _receipt;
+    }
+
+    // Create NFT
     uint _tokenId = totalSupply().add(1);
     _safeMint(msg.sender, _tokenId);
     _setTokenURI(_tokenId, _tokenURI);
