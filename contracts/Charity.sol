@@ -11,7 +11,7 @@ contract Charity is ERC721 {
 
   uint public holderCount = 0;
   mapping(uint => address) public holderList;
-  uint256 REWARDAMOUNT = 1000000000000000000;     // 10 Tokens
+  uint256 REWARDAMOUNT = 1000000000000000000;     // 1 Tokens
 
   /**
   * Network: Kovan Testnet

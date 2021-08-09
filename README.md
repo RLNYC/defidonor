@@ -1,7 +1,7 @@
 # Defi Donors
 The Dapp allows donors transferring crypto assets into their donation fund account and receiving tax benefits.
 
-- Live Site: https://deifdonors.netlify.app/  (Works in Kovan Test Network)
+- Live Site: https://deifdonors.netlify.app/  (Works in Rinkeby Test Network)
 
 ## Techologies
 - React
@@ -12,3 +12,4 @@ The Dapp allows donors transferring crypto assets into their donation fund accou
 - BitGo SDK
 - Chainlink
 - Covalent API
+- Gnosis

@@ -44,10 +44,10 @@ function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setB
         }
 
         const ethLibAdapter = new Web3Adapter({ web3 });
-        const res = await CPK.create({ ethLibAdapter, ownerAccount: walletAddress })
-
+        const res = await CPK.create({ ethLibAdapter, ownerAccount: accounts[0] });
+        console.log("wallet", accounts[0]);
         console.log(res);
-        console.log(res.address);
+        console.log("Gnosis Safe Address", res.address);
         setSafeAddress(res.address);
         setCPK(res);
 
