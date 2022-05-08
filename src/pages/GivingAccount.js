@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import CPK, { Web3Adapter } from 'contract-proxy-kit';
 
-import { COVALENTAPIKEY } from '../config';
 import axios from '../axios';
 import Spinner from '../components/Spinner';
 

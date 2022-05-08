@@ -91,22 +91,14 @@ function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setB
                 <Link className="navbar-brand mb-0 h1 p-0" to="/">
                     <img style={{ width: '140px' }} src="./logo.jpg" alt="Logo" />
                 </Link>
-                <div className="d-flex align-items-center">
-                    <button
-                        className="btn btn-success my-2 my-sm-0 mr-2"
-                        onClick={openRamp}
-                    >
-                        Open Ramp
-                    </button>
-                    <button
-                        className="btn btn-warning my-2 my-sm-0"
-                        onClick={connetToWallet}
-                    >
-                        {walletAddress
-                            ? walletAddress.substring(0, 7) + '...' + walletAddress.substring(35, 42)
-                            : 'Connect to Wallet'}
-                    </button>
-                </div>
+                <button
+                    className="btn btn-warning my-2 my-sm-0"
+                    onClick={connetToWallet}
+                >
+                    {walletAddress
+                        ? walletAddress.substring(0, 7) + '...' + walletAddress.substring(35, 42)
+                        : 'Connect to Wallet'}
+                </button>
                 
             </div>
             

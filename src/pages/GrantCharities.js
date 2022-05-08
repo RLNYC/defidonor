@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import CPK from 'contract-proxy-kit';
 
 import axios from '../axios';
-import { COVALENTAPIKEY } from '../config';
 import Spinner from '../components/Spinner';
 
 function GrantCharities({ bitgoWalletId, charitableBlockchain, safeAddress, cpk, tokenBlockchain }) {
