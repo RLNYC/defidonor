@@ -1,14 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk';
 import CPK, { Web3Adapter } from 'contract-proxy-kit';
 import Web3 from 'web3';
+import UAuth from '@uauth/js';
 
 import axios from '../../axios';
 import Token from '../../abis/Token.json';
 import CharitableBlockchain from '../../abis/Charity.json';
 
+import {
+    UNSTOPPABLEDOMAINS_CLIENT_ID,
+    UNSTOPPABLEDOMAINS_REDIRECT_URI,
+} from '../../config';
+
+const uauth = new UAuth({
+    clientID: UNSTOPPABLEDOMAINS_CLIENT_ID,
+    scope: 'openid email wallet',
+    redirectUri: UNSTOPPABLEDOMAINS_REDIRECT_URI,
+})
+
 function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setBitgoWalletId, setSafeAddress, setCPK, setTokenBlockchain }) {
+    const [domainName, setDomainName] = useState('');
+
+    const login = async () => {
+        try {
+            const authorization = await uauth.loginWithPopup();
+
+            console.log(authorization);
+            setDomainName(authorization.idToken.sub);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const connetToWallet = async () => {
         if (window.ethereum) {
             window.web3 = new Web3(window.ethereum);
@@ -91,15 +116,17 @@ function Navbar({ walletAddress, setWalletAddress, setCharitableBlockchain, setB
                 <Link className="navbar-brand mb-0 h1 p-0" to="/">
                     <img style={{ width: '140px' }} src="./logo.jpg" alt="Logo" />
                 </Link>
-                <button
-                    className="btn btn-warning my-2 my-sm-0"
-                    onClick={connetToWallet}
-                >
-                    {walletAddress
-                        ? walletAddress.substring(0, 7) + '...' + walletAddress.substring(35, 42)
-                        : 'Connect to Wallet'}
-                </button>
-                
+                <div>
+                    <button
+                        className="btn btn-warning my-2 my-sm-0 mr-2"
+                        onClick={login}
+                    >
+                        {domainName
+                            ? domainName
+                            : ' Login with Unstoppable'}
+                    </button>
+                </div>
+               
             </div>
             
         </nav>
